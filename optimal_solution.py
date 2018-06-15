@@ -17,7 +17,7 @@ def dis(pt1, pt2):
     for i in range(pt1.dim):
         a = int(pt1.data[i])
         b = int(pt2.data[i])
-        sum = sum + (a - b) * (a - b)
+        sum = float(sum + (a - b) * (a - b))
     return math.sqrt(sum)
 
 def calculate_accuracy(data_list, sol, k):
