@@ -1,7 +1,7 @@
 from optimal_solution import dis
 import random
 
-def kmedian(data_list, k, max_iter = 10):
+def kmedian(data_list, k, max_iter = 1000):
     num = len(data_list)
     random_begin = [random.randint(0, num-1) for x in range(k)]
     cur_acc = cal_dis(data_list, random_begin)

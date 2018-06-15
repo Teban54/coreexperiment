@@ -2,15 +2,14 @@ from optimal_solution import dis
 from kmedian import cal_dis
 import random
 
-def local_search_capture(data_list, k, alpha = 1, beta = 1, max_iter = 10):
+def local_search_capture(data_list, k, alpha = 1, beta = 1, max_iter = 1000):
     num = len(data_list)
     random_begin = [random.randint(0, num-1) for x in range(k)]
     flag = True
     temp = random_begin
-    cnt = 0
-    while flag and cnt < max_iter:
-        cnt += 1
-        print cnt
+    iter_cnt = 0
+    while flag and iter_cnt < max_iter:
+        iter_cnt += 1
         flag = False
         assignment = dict()
         for client in data_list:
@@ -45,9 +44,10 @@ def local_search_capture(data_list, k, alpha = 1, beta = 1, max_iter = 10):
                 temp[next_close_center_index] = i
                 flag = True
                 break
-    calc_kcenter_objective(data_list, temp, k)
+    kcenterobj = calc_kcenter_objective(data_list, temp, k)
     kmedianobj = cal_dis(data_list, temp)
     print "For %d center objective, local search value is %d" % (k, kmedianobj)
+    return kcenterobj, kmedianobj
 
 def calc_kcenter_objective(data_list, cur_sol, k):
     assignment = dict()
@@ -61,6 +61,7 @@ def calc_kcenter_objective(data_list, cur_sol, k):
         if min > ans:
             ans = min
     print "For %d center objective, local search value is %d" % (k , ans)
+    return ans
 
 
 

@@ -32,4 +32,5 @@ def kcenter(data_list, k):
         if min > ans:
             ans = min
     print "For %d center objective, 2-approx value is %d" % (k , ans)
+    return ans
 
