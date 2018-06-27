@@ -2,7 +2,7 @@ from optimal_solution import dis
 from kmedian import cal_dis
 import random
 
-def local_search_capture(data_list, k, alpha = 1, beta = 1, max_iter = 1000):
+def local_search_capture(data_list, k, alpha = 1, beta = 1, max_iter = 100):
     num = len(data_list)
     random_begin = [random.randint(0, num-1) for x in range(k)]
     flag = True

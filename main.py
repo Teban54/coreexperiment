@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 if __name__ == '__main__':
     file_name = 'dataset_1'
     sample_num = 100
-    k = 2
+    k = 5
     print 'Working on %s, Randomly select %d samples, %d Centers' % (file_name, sample_num, k)
     parsed_data = parse_data(file_name)
     print 'Succeed in Parsing Data'
@@ -41,7 +41,7 @@ if __name__ == '__main__':
             ax2.plot(x, control_kmedian, color = 'green')
             ax2.plot(x, exp_kmedian, color ='red')
             plt.title('Center Median alpha=%.1f,beta=%.1f' % (alpha, beta))
-            plt.savefig('alpha = %.1f, beta =%.1f.png' % (alpha, beta))
+            plt.savefig('k=5, alpha = %.1f, beta =%.1f.png' % (alpha, beta))
 
 
 
