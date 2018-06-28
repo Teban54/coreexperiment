@@ -46,7 +46,7 @@ if __name__ == '__main__':
     file_name = 'dataset_1'
     sample_num = 20
     parsed_data = parse_data(file_name)
-    print 'Succeed'
+    print('Succeed')
     sampled_data = random_sample(parsed_data, sample_num)
-    print optimal_solution(sampled_data, 2)
+    print(optimal_solution(sampled_data, 2))
 

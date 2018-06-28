@@ -44,9 +44,11 @@ def local_search_capture(data_list, k, alpha = 1, beta = 1, max_iter = 100):
                 temp[next_close_center_index] = i
                 flag = True
                 break
+    if iter_cnt == max_iter:
+        print('Did not converge %d %d' % (alpha, beta))
     kcenterobj = calc_kcenter_objective(data_list, temp, k)
     kmedianobj = cal_dis(data_list, temp)
-    print "For %d center objective, local search value is %d" % (k, kmedianobj)
+    print("For %d median objective, local search value is %d" % (k, kmedianobj))
     return kcenterobj, kmedianobj
 
 def calc_kcenter_objective(data_list, cur_sol, k):
@@ -60,7 +62,7 @@ def calc_kcenter_objective(data_list, cur_sol, k):
                 mincenter = center
         if min > ans:
             ans = min
-    print "For %d center objective, local search value is %d" % (k , ans)
+    print("For %d center objective, local search value is %d" % (k , ans))
     return ans
 
 

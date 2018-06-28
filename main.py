@@ -11,9 +11,9 @@ if __name__ == '__main__':
     file_name = 'dataset_1'
     sample_num = 100
     k = 5
-    print 'Working on %s, Randomly select %d samples, %d Centers' % (file_name, sample_num, k)
+    print('Working on %s, Randomly select %d samples, %d Centers' % (file_name, sample_num, k))
     parsed_data = parse_data(file_name)
-    print 'Succeed in Parsing Data'
+    print('Succeed in Parsing Data')
     tot_exp = 30
     control_kcenter = np.zeros(tot_exp)
     control_kmedian = np.zeros(tot_exp)
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     for alpha in [0.8, 1.0, 1.2]:
         for beta in [0.8, 1.0, 1.2]:
             for i in range(tot_exp):
-                print 'Experiment %d' % (i)
+                print('Experiment %d' % (i))
                 sampled_data = random_sample(parsed_data, sample_num)
                 #print 'Optimal %d Median Accuracy: %f' % (k, optimal_solution(sampled_data, k))
                 #print 'Local Search %d Median Accuracy: %f' % (k, local_search(sampled_data, k))

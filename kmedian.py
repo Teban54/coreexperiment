@@ -24,7 +24,7 @@ def kmedian(data_list, k, max_iter = 100):
                     break
             if flag:
                 break
-    print "For %d center objective, 5-approx value is %d" % (k , local_move_acc)
+    print("For %d median objective, 5-approx value is %d" % (k , local_move_acc))
     return local_move_acc
 
 def cal_dis(client_list, center_list):

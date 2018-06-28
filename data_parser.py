@@ -1,4 +1,5 @@
 import random
+import math
 
 def represent_int(s):
     try:
@@ -29,7 +30,13 @@ def convert_to_num(line_data, convert_map):
     modified_data = list()
     for i in range(len(line_data)):
         if represent_int(line_data[i]):
-            modified_data.append(line_data[i])
+            if (int(line_data[i]) > 10000):
+                modified_data.append(str(math.trunc(int(line_data[i]) / 10000)))  # 10000
+            elif (int(line_data[i]) > 100):
+                modified_data.append(str(math.trunc(int(line_data[i]) / 100)))  # 10000
+            else:
+                modified_data.append(line_data[i])
+            #modified_data.append(line_data[i])
             continue
         if not line_data[i] in convert_map[i]:
             convert_map[i][line_data[i]] = str(len(convert_map[i]))
@@ -67,7 +74,7 @@ if __name__ == '__main__':
     file_name = 'dataset_1'
     sample_num = 10
     parsed_data = parse_data(file_name)
-    print 'Succeed'
+    print('Succeed')
     sampled_data = random_sample(parsed_data, sample_num)
     for i in sampled_data:
-        print i
+        print(i)
