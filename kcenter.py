@@ -1,7 +1,8 @@
 from optimal_solution import dis
 import random
+from utils import *
 
-def kcenter(data_list, k):
+def kcenter(data_list, k, alpha = 1):
     num = len(data_list)
     assignment = dict()
     cur_sol = set([random.randint(0, num-1)])
@@ -11,8 +12,8 @@ def kcenter(data_list, k):
         for c in range(len(data_list)):
             client = data_list[c]
             dis_cur_sol = 100000000000
-            for c in cur_sol:
-                center = data_list[c]
+            for c_alt in cur_sol:
+                center = data_list[c_alt]
                 if (dis(client, center) < dis_cur_sol):
                     dis_cur_sol = dis(client, center)
             if (dis_cur_sol > furthest_center_distance):
@@ -32,5 +33,5 @@ def kcenter(data_list, k):
         if min > ans:
             ans = min
     print("For %d center objective, 2-approx value is %d" % (k , ans))
-    return ans
+    return ans, calc_beta(data_list, list(cur_sol), alpha)
 

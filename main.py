@@ -17,29 +17,41 @@ if __name__ == '__main__':
     tot_exp = 30
     control_kcenter = np.zeros(tot_exp)
     control_kmedian = np.zeros(tot_exp)
+    control_kcenter_betas = np.zeros(tot_exp)
+    control_kmedian_betas = np.zeros(tot_exp)
 
     exp_kcenter = np.zeros(tot_exp)
     exp_kmedian = np.zeros(tot_exp)
+    exp_betas = np.zeros(tot_exp)
 
+    #for alpha in [0.8, 1.0, 1.2]:
     for alpha in [0.8, 1.0, 1.2]:
-        for beta in [0.8, 1.0, 1.2]:
+        #for beta in [0.8, 1.0, 1.2]:
+        for beta in [0.8, 1.0]:
             for i in range(tot_exp):
                 print('Experiment %d' % (i))
                 sampled_data = random_sample(parsed_data, sample_num)
                 #print 'Optimal %d Median Accuracy: %f' % (k, optimal_solution(sampled_data, k))
                 #print 'Local Search %d Median Accuracy: %f' % (k, local_search(sampled_data, k))
-                control_kcenter[i] = kcenter(sampled_data, k)
-                control_kmedian[i] = kmedian(sampled_data, k)
-                exp_kcenter[i], exp_kmedian[i] = local_search_capture(sampled_data, k, alpha, beta)
+                control_kcenter[i], control_kcenter_betas[i] = kcenter(sampled_data, k, alpha)
+                control_kmedian[i], control_kmedian_betas[i] = kmedian(sampled_data, k, alpha)
+                exp_kcenter[i], exp_kmedian[i], exp_betas[i] = local_search_capture(sampled_data, k, alpha, beta)
+                #print("%f %f %f" % (control_kcenter_betas[i], control_kmedian_betas[i], exp_betas[i]))
             x = range(tot_exp)
-            fig = plt.figure()
-            ax1 = fig.add_subplot(121)
-            ax2 = fig.add_subplot(122)
+            fig = plt.figure(figsize=(12, 4.8))  # dpi=100
+            #ax1 = fig.add_subplot(121)
+            #ax2 = fig.add_subplot(122)
+            ax1 = fig.add_subplot(131)
+            ax2 = fig.add_subplot(132)
+            ax3 = fig.add_subplot(133)
 
             ax1.plot(x, control_kcenter, color = 'green')
             ax1.plot(x, exp_kcenter, color = 'red')
-            ax2.plot(x, control_kmedian, color = 'green')
+            ax2.plot(x, control_kmedian, color = 'blue')
             ax2.plot(x, exp_kmedian, color ='red')
+            ax3.plot(x, control_kcenter_betas, color = 'green')
+            ax3.plot(x, control_kmedian_betas, color = 'blue')
+            ax3.plot(x, exp_betas, color ='red')
             plt.title('Center Median alpha=%.1f,beta=%.1f' % (alpha, beta))
             plt.savefig('k=5, alpha = %.1f, beta =%.1f.png' % (alpha, beta))
 

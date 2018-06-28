@@ -1,7 +1,8 @@
 from optimal_solution import dis
 import random
+from utils import *
 
-def kmedian(data_list, k, max_iter = 100):
+def kmedian(data_list, k, alpha = 1, max_iter = 100):
     num = len(data_list)
     random_begin = [random.randint(0, num-1) for x in range(k)]
     cur_acc = cal_dis(data_list, random_begin)
@@ -25,7 +26,7 @@ def kmedian(data_list, k, max_iter = 100):
             if flag:
                 break
     print("For %d median objective, 5-approx value is %d" % (k , local_move_acc))
-    return local_move_acc
+    return local_move_acc, calc_beta(data_list, cur_state, alpha)
 
 def cal_dis(client_list, center_list):
     assignment = dict()
