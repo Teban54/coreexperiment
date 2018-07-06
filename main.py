@@ -13,10 +13,12 @@ if __name__ == '__main__':
     file_name = 'dataset_1'
     sample_num = 100
     k = 5
+    #sample_num = 10
+    #k = 2
     print('Working on %s, Randomly select %d samples, %d Centers' % (file_name, sample_num, k))
     parsed_data = parse_data(file_name)
     print('Succeed in Parsing Data')
-    tot_exp = 30
+    tot_exp = 100
     control_kcenter = np.zeros(tot_exp)
     control_kmedian = np.zeros(tot_exp)
     control_kcenter_betas = np.zeros(tot_exp)

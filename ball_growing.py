@@ -11,6 +11,7 @@ import math
 agent_match = {} # dict mapping agent index to facility index matched
 coalition_size = 0 # Hopefully not 1 as it can cause issues
 open_facilities = set()
+#match_add_agents = 0
 
 
 #TODO
@@ -71,7 +72,13 @@ class facility:
         return self.cur_pointer.dist - other.cur_pointer.dist < 0
 
     def __str__(self):
-        return "%d %d" % (self.index, self.cur_pointer.dist)
+        #return "%d %.2f" % (self.index, self.cur_pointer.dist)
+        str = []
+        agent = self.agent_list
+        while agent is not None:
+            str.append("(%d, %.2f)" % (agent.index, agent.dist))
+            agent = agent.next
+        return "%d %.2f %s" % (self.index, self.cur_pointer.dist, "[" + ', '.join(str) + "]")
 
     def remove_node(self, agent_node, update_pointer = True):
         if update_pointer and self.cur_pointer:
@@ -118,18 +125,25 @@ class facility:
             found_match = self.remove_matched_agents(self.cur_pointer, True)
             if not found_match: # match agent here
                 agent_match[self.cur_pointer.index] = self.index
+                #print("Agent %s matched to facility %d with distance %.2f" % (self.cur_pointer.index, self.index, self.cur_pointer.dist))
                 self.cur_pointer = self.cur_pointer.next
+                #global match_add_agents
+                #match_add_agents += 1
         else: # Not open yet
             found_match = self.remove_matched_agents(self.agent_list, True)
             if not found_match: # all S agents before cur_pointer (inclusive) are unmatched, open facility
                 open_facilities.add(self.index)
                 agent = self.agent_list
+                #agents_matched = [] # for prints
                 while agent != self.cur_pointer.next:
                     if agent.index in agent_match: # bug in code
                         raise RuntimeError
                     agent_match[agent.index] = self.index
+                    #agents_matched.append(agent.index)
                     agent = agent.next
                 self.cur_pointer = self.cur_pointer.next
+                #print("Opened facility %d" % self.index)
+                #print("Agents %s matched to facility %d" % (','.join(str(x) for x in agents_matched), self.index))
         return self.cur_pointer is not None
 
 
@@ -146,8 +160,11 @@ def ball_growing(data_list, k, alpha = 1):
     global agent_match
     global coalition_size
     global open_facilities
+    #global match_add_agents
     agent_match = {}
     open_facilities = set()
+    #
+    # match_add_agents = 0
 
     num = len(data_list)
     coalition_size = math.ceil(alpha * num / k)
@@ -162,10 +179,12 @@ def ball_growing(data_list, k, alpha = 1):
         if push_back:
             heapq.heappush(pq, cur_facility)
         #print(pq)
-        #print(', '.join(str(x) for x in pq))
+        #print('\n'.join(str(x) for x in pq))
+        #print()
 
     facility_indexes = list(open_facilities)
     print("Ball growing algorithm picked %d facilities when k=%d" % (len(facility_indexes), k))
+    #print("%d agents were matched to a facility already opened" % match_add_agents)
     kcenterobj = calc_kcenter_objective(data_list, facility_indexes, k)
     kmedianobj = cal_dis(data_list, facility_indexes)
     print("For %d median objective, ball growing value is %d" % (k, kmedianobj))
