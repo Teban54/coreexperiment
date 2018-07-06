@@ -1,7 +1,7 @@
 from optimal_solution import dis
 import math
 
-def calc_beta(client_list, center_list, alpha=1):
+def calc_beta(client_list, center_list, k, alpha=1):
     """
     Calculate the smallest beta value in the solution (figuratively speaking, the maximum distance any
     blocking coalition is allowed to deviate).
@@ -24,7 +24,7 @@ def calc_beta(client_list, center_list, alpha=1):
         client_list.
     """
     num = len(client_list)
-    k = len(center_list)
+    #k = len(center_list)
 
     # Compute current assignments (nearest center for each client)
     assignment = dict()
@@ -54,6 +54,8 @@ def calc_beta(client_list, center_list, alpha=1):
         beta = beta_list[int(math.ceil(alpha * num / k)) - 1]
         min_beta = beta if beta < min_beta else min_beta
 
+    if min_beta == 10000000000000000:
+        min_beta = 3.0
     return min_beta
 
 

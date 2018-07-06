@@ -28,7 +28,7 @@ def kmedian(data_list, k, alpha = 1, max_iter = 100, groups_list = None):
     print("For %d median objective, 5-approx value is %d" % (k , local_move_acc))
     if groups_list:
         return local_move_acc, calc_beta_groups(data_list, groups_list, cur_state, alpha)
-    return local_move_acc, calc_beta(data_list, cur_state, alpha)
+    return local_move_acc, calc_beta(data_list, cur_state, k, alpha)
 
 def cal_dis(client_list, center_list):
     assignment = dict()

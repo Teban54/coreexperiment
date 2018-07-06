@@ -62,7 +62,7 @@ if __name__ == '__main__':
             ax3.plot(x, control_kmedian_betas, color = 'blue')
             ax3.plot(x, exp_betas, color ='red')
             ax3.plot(x, bg_betas, color ='black')
-            plt.title('alpha=%.1f, beta=%.1f: k-center green, k-median blue, local search red, ball growing black' % (alpha, beta))
+            plt.title('alpha=%.1f, beta=%.1f: k-center green, k-median blue, local red, ball black' % (alpha, beta))
             plt.savefig('Ball growing, k=%d, alpha = %.1f, beta =%.1f.png' % (k, alpha, beta))
 
             """

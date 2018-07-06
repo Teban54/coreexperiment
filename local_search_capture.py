@@ -50,7 +50,7 @@ def local_search_capture(data_list, k, alpha = 1, beta = 1, max_iter = 100):
     kcenterobj = calc_kcenter_objective(data_list, temp, k)
     kmedianobj = cal_dis(data_list, temp)
     print("For %d median objective, local search value is %d" % (k, kmedianobj))
-    return kcenterobj, kmedianobj, calc_beta(data_list, temp, alpha)
+    return kcenterobj, kmedianobj, calc_beta(data_list, temp, k, alpha)
 
 def calc_kcenter_objective(data_list, cur_sol, k):
     assignment = dict()

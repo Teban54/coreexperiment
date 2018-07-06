@@ -35,5 +35,5 @@ def kcenter(data_list, k, alpha = 1, groups_list = None):
     print("For %d center objective, 2-approx value is %d" % (k , ans))
     if groups_list:
         return ans, calc_beta_groups(data_list, groups_list, list(cur_sol), alpha)
-    return ans, calc_beta(data_list, list(cur_sol), alpha)
+    return ans, calc_beta(data_list, list(cur_sol), k, alpha)
 
