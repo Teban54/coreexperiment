@@ -15,9 +15,9 @@ open_facilities = set()
 
 #TODO
 class agent_node:
-    index: int # agent index
-    point: data_pt # agent point
-    dist: float # distance from facility to agent
+    #index: int # agent index
+    #point: data_pt # agent point
+    #dist: float # distance from facility to agent
     def __init__(self, index, point, dist):
         self.index = index
         self.point = point
@@ -33,11 +33,11 @@ class agent_node:
 
 #@dataclass(order=True)
 class facility:
-    index: int
-    point: data_pt
-    agent_list: agent_node
-    cur_pointer: agent_node
-    agent_list_len: int # length of agent_list
+    #self.index = 0 #int
+    #self.point = None #data_pt
+    #self.agent_list = None #agent_node
+    #self.cur_pointer = None #agent_node
+    #self.agent_list_len = 0 #int # length of agent_list
     # cur_pointer_pos: int # position of cur_pointer in agent_list, 0-indexed
 
     def __init__(self, index, data_list):
@@ -56,6 +56,7 @@ class facility:
         agents[0].prev = None
         self.agent_list = agent_list_end
         for i in range(1, len(data_list)):
+            #print(coalition_size)
             agent_list_end.next = agents[i]
             agents[i].prev = agent_list_end
             agent_list_end = agents[i]
@@ -63,13 +64,14 @@ class facility:
                 self.cur_pointer = agent_list_end
                 # self.cur_pointer_pos = i
 
-    def __cmp__(self, other):
+    #def __cmp__(self, other):
+    def __lt__(self, other):
         if self.cur_pointer.dist == other.cur_pointer.dist:
-            return self.index - other.index
-        return self.cur_pointer.dist - other.cur_pointer.dist
+            return self.index - other.index < 0
+        return self.cur_pointer.dist - other.cur_pointer.dist < 0
 
     def __str__(self):
-        return self.index + " " + self.cur_pointer.dist
+        return "%d %d" % (self.index, self.cur_pointer.dist)
 
     def remove_node(self, agent_node, update_pointer = True):
         if update_pointer and self.cur_pointer:
@@ -141,6 +143,12 @@ def ball_growing(data_list, k, alpha = 1):
              - k-median objective value
              - minimum beta value
     """
+    global agent_match
+    global coalition_size
+    global open_facilities
+    agent_match = {}
+    open_facilities = set()
+
     num = len(data_list)
     coalition_size = math.ceil(alpha * num / k)
     pq = []
@@ -153,7 +161,8 @@ def ball_growing(data_list, k, alpha = 1):
         push_back = cur_facility.process()
         if push_back:
             heapq.heappush(pq, cur_facility)
-        print(pq)
+        #print(pq)
+        #print(', '.join(str(x) for x in pq))
 
     facility_indexes = list(open_facilities)
     kcenterobj = calc_kcenter_objective(data_list, facility_indexes, k)
