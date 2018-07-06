@@ -61,7 +61,7 @@ def parse_data(file_name):
 def random_sample(parsed_data, num):
     s = set()
     data_list = []
-    while (len(s) <= num):
+    while (len(s) < num):
         t = random.randint(0, len(parsed_data) - 1)
         if not t in s:
             s.add(parsed_data[t])
