@@ -4,6 +4,7 @@ from local_search import local_search
 from kcenter import kcenter
 from kmedian import kmedian
 from local_search_capture import *
+from ball_growing import *
 import numpy as np
 import matplotlib.pyplot as plt
 from utils import *
@@ -24,40 +25,48 @@ if __name__ == '__main__':
     exp_kcenter = np.zeros(tot_exp)
     exp_kmedian = np.zeros(tot_exp)
     exp_betas = np.zeros(tot_exp)
+    bg_kcenter = np.zeros(tot_exp)
+    bg_kmedian = np.zeros(tot_exp)
+    bg_betas = np.zeros(tot_exp)
 
     #for alpha in [0.8, 1.0, 1.2]:
     for alpha in [0.8, 1.0, 1.2]:
     #for alpha in [1.0]:
         #for beta in [0.8, 1.0, 1.2]:
-        for beta in [0.8, 1.0]:
-        #for beta in [1.0]:
-            # for i in range(tot_exp):
-            #     print('Experiment %d' % (i))
-            #     sampled_data = random_sample(parsed_data, sample_num)
-            #     #print 'Optimal %d Median Accuracy: %f' % (k, optimal_solution(sampled_data, k))
-            #     #print 'Local Search %d Median Accuracy: %f' % (k, local_search(sampled_data, k))
-            #     control_kcenter[i], control_kcenter_betas[i] = kcenter(sampled_data, k, alpha)
-            #     control_kmedian[i], control_kmedian_betas[i] = kmedian(sampled_data, k, alpha)
-            #     exp_kcenter[i], exp_kmedian[i], exp_betas[i] = local_search_capture(sampled_data, k, alpha, beta)
-            # x = range(tot_exp)
-            # fig = plt.figure(figsize=(12, 4.8))  # dpi=100
-            # #ax1 = fig.add_subplot(121)
-            # #ax2 = fig.add_subplot(122)
-            # ax1 = fig.add_subplot(131)
-            # ax2 = fig.add_subplot(132)
-            # ax3 = fig.add_subplot(133)
-            #
-            # ax1.plot(x, control_kcenter, color = 'green')
-            # ax1.plot(x, exp_kcenter, color = 'red')
-            # ax2.plot(x, control_kmedian, color = 'blue')
-            # ax2.plot(x, exp_kmedian, color ='red')
-            # ax3.plot(x, control_kcenter_betas, color = 'green')
-            # ax3.plot(x, control_kmedian_betas, color = 'blue')
-            # ax3.plot(x, exp_betas, color ='red')
-            # plt.title('Center Median alpha=%.1f,beta=%.1f' % (alpha, beta))
-            # #plt.savefig('k=5, alpha = %.1f, beta =%.1f.png' % (alpha, beta))
-            # plt.savefig('k=5, alpha = %.1f, beta =%.1f, protected groups.png' % (alpha, beta))
+        #for beta in [0.8, 1.0]:
+        for beta in [1.0]:
+            for i in range(tot_exp):
+                print('Experiment %d' % (i))
+                sampled_data = random_sample(parsed_data, sample_num)
+                #print 'Optimal %d Median Accuracy: %f' % (k, optimal_solution(sampled_data, k))
+                #print 'Local Search %d Median Accuracy: %f' % (k, local_search(sampled_data, k))
+                control_kcenter[i], control_kcenter_betas[i] = kcenter(sampled_data, k, alpha)
+                control_kmedian[i], control_kmedian_betas[i] = kmedian(sampled_data, k, alpha)
+                exp_kcenter[i], exp_kmedian[i], exp_betas[i] = local_search_capture(sampled_data, k, alpha, beta)
+                bg_kcenter[i], bg_kmedian[i], bg_betas[i] = ball_growing(sampled_data, k, alpha)
+            x = range(tot_exp)
+            fig = plt.figure(figsize=(12, 4.8))  # dpi=100
+            #ax1 = fig.add_subplot(121)
+            #ax2 = fig.add_subplot(122)
+            ax1 = fig.add_subplot(131)
+            ax2 = fig.add_subplot(132)
+            ax3 = fig.add_subplot(133)
 
+            ax1.plot(x, control_kcenter, color = 'green')
+            ax1.plot(x, exp_kcenter, color = 'red')
+            ax1.plot(x, bg_kcenter, color = 'black')
+            ax2.plot(x, control_kmedian, color = 'blue')
+            ax2.plot(x, exp_kmedian, color ='red')
+            ax2.plot(x, bg_kmedian, color ='black')
+            ax3.plot(x, control_kcenter_betas, color = 'green')
+            ax3.plot(x, control_kmedian_betas, color = 'blue')
+            ax3.plot(x, exp_betas, color ='red')
+            ax3.plot(x, bg_betas, color ='black')
+            plt.title('alpha=%.1f, beta=%.1f: k-center green, k-median blue, local search red, ball growing black' % (alpha, beta))
+            plt.savefig('Ball growing, k=%d, alpha = %.1f, beta =%.1f.png' % (k, alpha, beta))
+
+            """
+            # Protected Groups
             criteria = [9, 8, 3]  # Gender, race, highest degree
             x = range(tot_exp)
             fig = plt.figure(figsize=(12, 4.8))  # dpi=100
@@ -91,5 +100,5 @@ if __name__ == '__main__':
             plt.title('Gender Race Degree alpha=%.1f,beta=%.1f' % (alpha, beta))
             #plt.savefig('k=5, alpha = %.1f, beta =%.1f.png' % (alpha, beta))
             plt.savefig('k=5, alpha = %.1f, beta =%.1f, protected groups.png' % (alpha, beta))
-
+            """
 
