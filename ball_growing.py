@@ -158,5 +158,5 @@ def ball_growing(data_list, k, alpha = 1):
     facility_indexes = list(open_facilities)
     kcenterobj = calc_kcenter_objective(data_list, facility_indexes, k)
     kmedianobj = cal_dis(data_list, facility_indexes)
-    print("For %d median objective, local search value is %d" % (k, kmedianobj))
+    print("For %d median objective, ball growing value is %d" % (k, kmedianobj))
     return kcenterobj, kmedianobj, calc_beta(data_list, facility_indexes, alpha)
