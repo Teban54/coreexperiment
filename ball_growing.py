@@ -41,7 +41,7 @@ class facility:
     #self.agent_list_len = 0 #int # length of agent_list
     # cur_pointer_pos: int # position of cur_pointer in agent_list, 0-indexed
 
-    def __init__(self, index, data_list):
+    def __init__(self, index, data_list, distances):
         self.index = index
         self.point = data_list[index]
         self.agent_list_len = len(data_list)
@@ -49,7 +49,7 @@ class facility:
         # Generate distances and sort agents by distance
         agents = []
         for i in range(len(data_list)):
-            agents.append(agent_node(i, data_list[i], dis(self.point, data_list[i])))
+            agents.append(agent_node(i, data_list[i], distances[self.point][data_list[i]]))
         agents.sort(key=lambda agent: agent.dist)
 
         # Convert sorted list to linked list
@@ -147,7 +147,7 @@ class facility:
         return self.cur_pointer is not None
 
 
-def ball_growing(data_list, k, alpha = 1):
+def ball_growing(data_list, k, alpha=1, distances=None):
     """
     Runs the ball-growing algorithm that gives 2.414-approx.
     :param data_list: list of data points (serve as both agents and facilities)
@@ -166,11 +166,13 @@ def ball_growing(data_list, k, alpha = 1):
     #
     # match_add_agents = 0
 
+    if not distances:
+        distances = calc_distances(data_list)
     num = len(data_list)
     coalition_size = math.ceil(alpha * num / k)
     pq = []
     for i in range(num):
-        pq.append(facility(i, data_list))
+        pq.append(facility(i, data_list, distances))
     heapq.heapify(pq)
 
     while len(pq) > 0 and len(open_facilities) < k:
@@ -185,7 +187,7 @@ def ball_growing(data_list, k, alpha = 1):
     facility_indexes = list(open_facilities)
     print("Ball growing algorithm picked %d facilities when k=%d" % (len(facility_indexes), k))
     #print("%d agents were matched to a facility already opened" % match_add_agents)
-    kcenterobj = calc_kcenter_objective(data_list, facility_indexes, k)
-    kmedianobj = cal_dis(data_list, facility_indexes)
+    kcenterobj = calc_kcenter_objective(data_list, facility_indexes, k, distances)
+    kmedianobj = cal_dis(data_list, facility_indexes, distances)
     print("For %d median objective, ball growing value is %d" % (k, kmedianobj))
     return kcenterobj, kmedianobj, calc_beta(data_list, facility_indexes, k, alpha)

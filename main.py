@@ -12,16 +12,16 @@ import statistics
 
 if __name__ == '__main__':
     file_name = 'dataset_1'
-    sample_num = 500  # 100
+    sample_num = 200  # 100
     # k = 5
     min_k = 2
-    max_k = 100
-    k_step = 1
+    max_k = 50
+    k_step = 5
     # print('Working on %s, Randomly select %d samples, %d Centers' % (file_name, sample_num, k))
     print('Working on %s, Randomly select %d samples, k from %d to %d' % (file_name, sample_num, min_k, max_k))
     parsed_data = parse_data(file_name)
     print('Succeed in Parsing Data')
-    tot_exp = 30
+    tot_exp = 10
 
     #for alpha in [0.8, 1.0, 1.2]:
     for alpha in [0.8, 1.0, 1.2]:
@@ -57,12 +57,13 @@ if __name__ == '__main__':
                 for i in range(tot_exp):
                     print('Experiment %d' % (i))
                     sampled_data = random_sample(parsed_data, sample_num)
+                    distances = calc_distances(sampled_data)
                     #print 'Optimal %d Median Accuracy: %f' % (k, optimal_solution(sampled_data, k))
                     #print 'Local Search %d Median Accuracy: %f' % (k, local_search(sampled_data, k))
-                    control_kcenter[i], control_kcenter_betas[i] = kcenter(sampled_data, k, alpha)
-                    control_kmedian[i], control_kmedian_betas[i] = kmedian(sampled_data, k, alpha)
-                    exp_kcenter[i], exp_kmedian[i], exp_betas[i] = local_search_capture(sampled_data, k, alpha, beta)
-                    bg_kcenter[i], bg_kmedian[i], bg_betas[i] = ball_growing(sampled_data, k, alpha)
+                    control_kcenter[i], control_kcenter_betas[i] = kcenter(sampled_data, k, alpha, distances=distances)
+                    control_kmedian[i], control_kmedian_betas[i] = kmedian(sampled_data, k, alpha, distances=distances)
+                    exp_kcenter[i], exp_kmedian[i], exp_betas[i] = local_search_capture(sampled_data, k, alpha, beta, distances=distances)
+                    bg_kcenter[i], bg_kmedian[i], bg_betas[i] = ball_growing(sampled_data, k, alpha, distances=distances)
 
                 control_kcenter_avg.append(statistics.mean(control_kcenter))
                 control_kmedian_avg.append(statistics.mean(control_kmedian))

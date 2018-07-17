@@ -2,7 +2,9 @@ from optimal_solution import dis
 import random
 from utils import *
 
-def kcenter(data_list, k, alpha = 1, groups_list = None):
+def kcenter(data_list, k, alpha=1, groups_list=None, distances=None):
+    if not distances:
+        distances = calc_distances(data_list)
     num = len(data_list)
     assignment = dict()
     cur_sol = set([random.randint(0, num-1)])
@@ -14,8 +16,8 @@ def kcenter(data_list, k, alpha = 1, groups_list = None):
             dis_cur_sol = 100000000000
             for c_alt in cur_sol:
                 center = data_list[c_alt]
-                if (dis(client, center) < dis_cur_sol):
-                    dis_cur_sol = dis(client, center)
+                if (distances[client][center] < dis_cur_sol):
+                    dis_cur_sol = distances[client][center]
             if (dis_cur_sol > furthest_center_distance):
                 furthest_center_distance = dis_cur_sol
                 furthest_center = c
@@ -27,8 +29,8 @@ def kcenter(data_list, k, alpha = 1, groups_list = None):
     for client in data_list:
         min = 10000000000000000
         for center in cur_sol:
-            if (dis(data_list[center], client) < min):
-                min = dis(data_list[center], client)
+            if (distances[data_list[center]][client] < min):
+                min = distances[data_list[center]][client]
                 mincenter = center
         if min > ans:
             ans = min

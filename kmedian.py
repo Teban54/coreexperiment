@@ -2,10 +2,12 @@ from optimal_solution import dis
 import random
 from utils import *
 
-def kmedian(data_list, k, alpha = 1, max_iter = 100, groups_list = None):
+def kmedian(data_list, k, alpha=1, max_iter=100, groups_list=None, distances=None):
+    if not distances:
+        distances = calc_distances(data_list)
     num = len(data_list)
     random_begin = [random.randint(0, num-1) for x in range(k)]
-    cur_acc = cal_dis(data_list, random_begin)
+    cur_acc = cal_dis(data_list, random_begin, distances)
     cur_state = random_begin
     flag = True
     cnt = 0
@@ -16,7 +18,7 @@ def kmedian(data_list, k, alpha = 1, max_iter = 100, groups_list = None):
             for x in range(k):
                 temp = cur_state
                 temp[x] = i
-                local_move_acc = cal_dis(data_list, temp)
+                local_move_acc = cal_dis(data_list, temp, distances)
                 if local_move_acc >  cur_acc:
                     local_move_acc = cur_acc
                     cur_state = temp
@@ -30,14 +32,14 @@ def kmedian(data_list, k, alpha = 1, max_iter = 100, groups_list = None):
         return local_move_acc, calc_beta_groups(data_list, groups_list, cur_state, alpha)
     return local_move_acc, calc_beta(data_list, cur_state, k, alpha)
 
-def cal_dis(client_list, center_list):
+def cal_dis(client_list, center_list, distances):
     assignment = dict()
     ans = 0
     for client in client_list:
         min = 10000000000000000
         for c in center_list:
             center = client_list[c]
-            if (dis(client, center) < min):
-                min = dis(center, client)
+            if (distances[client][center] < min):
+                min = distances[center][client]
         ans = ans + min
     return ans

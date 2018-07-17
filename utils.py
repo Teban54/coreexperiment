@@ -119,3 +119,17 @@ def generate_groups(client_list, criteria_index):
 
     groups_list = [list for value, list in groups_dict.items()]
     return groups_list
+
+
+def calc_distances(client_list):
+    """
+    Calculate the distance between every pair of points.
+    :param client_list: list of clients
+    :return: nested dict giving distances between every pair of points
+    """
+    distances = {}
+    for x in client_list:
+        distances[x] = {}
+        for y in client_list:
+            distances[x][y] = dis(x, y)
+    return distances
