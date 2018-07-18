@@ -138,4 +138,4 @@ def local_search_capture_groups(data_list, groups_list, k, alpha=1, beta=1, max_
     kcenterobj = calc_kcenter_objective(data_list, temp, k, distances)
     kmedianobj = cal_dis(data_list, temp, distances)
     print("For %d median objective, local search value is %d" % (k, kmedianobj))
-    return kcenterobj, kmedianobj, calc_beta_groups(data_list, groups_list, temp, alpha)
+    return kcenterobj, kmedianobj, calc_beta_groups(data_list, groups_list, temp, k, alpha)

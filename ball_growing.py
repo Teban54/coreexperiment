@@ -1,5 +1,5 @@
 from optimal_solution import dis
-from kmedian import cal_dis
+from kmedian import *
 from utils import *
 from local_search_capture import calc_kcenter_objective
 # from queue import PriorityQueue
@@ -147,15 +147,18 @@ class facility:
         return self.cur_pointer is not None
 
 
-def ball_growing(data_list, k, alpha=1, distances=None):
+def ball_growing_procedure(data_list, k, alpha=1, distances=None,
+                           client_list=None, remaining_k=-1):
     """
-    Runs the ball-growing algorithm that gives 2.414-approx.
+    Performs the ball-growing algorithm that gives 2.414-approx.
     :param data_list: list of data points (serve as both agents and facilities)
-    :param k: number of centers to be opened
+    :param k: number of centers to be opened (determines blocking coalition size)
     :param alpha: parameter that gives size of blocking coalition (see utils)
-    :return: - k-center objective value
-             - k-median objective value
-             - minimum beta value
+    :param client_list: list of indexes of available facilities to choose
+        default: 0, 1, ..., len(data_list)-1
+    :param remaining_k: number of remaining centers to be opened
+        default: k
+    :return: list of indexes of opened facilities
     """
     global agent_match
     global coalition_size
@@ -168,25 +171,100 @@ def ball_growing(data_list, k, alpha=1, distances=None):
 
     if not distances:
         distances = calc_distances(data_list)
+    if not client_list:
+        client_list = range(len(data_list))
+    if remaining_k == -1:
+        remaining_k = k
     num = len(data_list)
     coalition_size = math.ceil(alpha * num / k)
     pq = []
-    for i in range(num):
+    for i in client_list:
         pq.append(facility(i, data_list, distances))
     heapq.heapify(pq)
 
-    while len(pq) > 0 and len(open_facilities) < k:
+    while len(pq) > 0 and len(open_facilities) < remaining_k:
         cur_facility = heapq.heappop(pq)
         push_back = cur_facility.process()
         if push_back:
             heapq.heappush(pq, cur_facility)
-        #print(pq)
-        #print('\n'.join(str(x) for x in pq))
-        #print()
 
     facility_indexes = list(open_facilities)
+    return facility_indexes
+
+
+def ball_growing(data_list, k, alpha=1, distances=None):
+    """
+    Runs the ball-growing algorithm that gives 2.414-approx.
+    :param data_list: list of data points (serve as both agents and facilities)
+    :param k: number of centers to be opened (determines blocking coalition size)
+    :param alpha: parameter that gives size of blocking coalition (see utils)
+    :return: - k-center objective value
+             - k-median objective value
+             - minimum beta value
+    """
+
+    if not distances:
+        distances = calc_distances(data_list)
+    facility_indexes = ball_growing_procedure(data_list, k, alpha, distances=distances, client_list=range(len(data_list)), remaining_k=k)
     print("Ball growing algorithm picked %d facilities when k=%d" % (len(facility_indexes), k))
-    #print("%d agents were matched to a facility already opened" % match_add_agents)
+    kcenterobj = calc_kcenter_objective(data_list, facility_indexes, k, distances)
+    kmedianobj = cal_dis(data_list, facility_indexes, distances)
+    print("For %d median objective, ball growing value is %d" % (k, kmedianobj))
+    return kcenterobj, kmedianobj, calc_beta(data_list, facility_indexes, k, alpha)
+
+
+def ball_growing_k_median(data_list, k, alpha=1, distances=None):
+    """
+    Runs the ball-growing algorithm followd by k-median algorithm.
+    :param data_list: list of data points (serve as both agents and facilities)
+    :param k: number of centers to be opened (determines blocking coalition size)
+    :param alpha: parameter that gives size of blocking coalition (see utils)
+    :return: - k-center objective value
+             - k-median objective value
+             - minimum beta value
+    """
+
+    if not distances:
+        distances = calc_distances(data_list)
+    remaining_indexes = set(range(len(data_list)))
+    facility_indexes = ball_growing_procedure(data_list, k, alpha, distances=distances, client_list=range(len(data_list)), remaining_k=k)
+    remaining_indexes = remaining_indexes.difference(set(facility_indexes))
+    remaining_k = k - len(facility_indexes)
+    if remaining_k > 0:
+        new_facility_indexes, _ = kmedian_procedure(data_list, k, alpha, distances=distances,
+                                                   client_list=list(remaining_indexes), remaining_k=remaining_k)
+        facility_indexes += new_facility_indexes
+
+    print("Ball growing + k-median algorithm picked %d facilities when k=%d" % (len(facility_indexes), k))
+    kcenterobj = calc_kcenter_objective(data_list, facility_indexes, k, distances)
+    kmedianobj = cal_dis(data_list, facility_indexes, distances)
+    print("For %d median objective, ball growing value is %d" % (k, kmedianobj))
+    return kcenterobj, kmedianobj, calc_beta(data_list, facility_indexes, k, alpha)
+
+
+def ball_growing_repeated(data_list, k, alpha=1, distances=None):
+    """
+    Runs the ball-growing algorithm repeatedly, until exactly k centers are opened.
+    :param data_list: list of data points (serve as both agents and facilities)
+    :param k: number of centers to be opened (determines blocking coalition size)
+    :param alpha: parameter that gives size of blocking coalition (see utils)
+    :return: - k-center objective value
+             - k-median objective value
+             - minimum beta value
+    """
+
+    if not distances:
+        distances = calc_distances(data_list)
+    remaining_indexes = set(range(len(data_list)))
+    facility_indexes = []
+    remaining_k = k
+
+    while remaining_k > 0:
+        facility_indexes += ball_growing_procedure(data_list, k, alpha, distances=distances, client_list=list(remaining_indexes), remaining_k=remaining_k)
+        remaining_indexes = remaining_indexes.difference(set(facility_indexes))
+        remaining_k = k - len(facility_indexes)
+
+    print("Ball growing algorithm (repeated) picked %d facilities when k=%d" % (len(facility_indexes), k))
     kcenterobj = calc_kcenter_objective(data_list, facility_indexes, k, distances)
     kmedianobj = cal_dis(data_list, facility_indexes, distances)
     print("For %d median objective, ball growing value is %d" % (k, kmedianobj))

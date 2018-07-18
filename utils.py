@@ -59,12 +59,12 @@ def calc_beta(client_list, center_list, k, alpha=1):
     return min_beta
 
 
-def calc_beta_groups(client_list, groups_list, center_list, alpha=1):
+def calc_beta_groups(client_list, groups_list, center_list, k, alpha=1):
     """
     Calculate the smallest beta value in any protected group.
     """
     num = len(client_list)
-    k = len(center_list)
+    # k = len(center_list)
 
     protected_set = set()
     for group in groups_list:
@@ -100,6 +100,8 @@ def calc_beta_groups(client_list, groups_list, center_list, alpha=1):
             beta = beta_list[int(math.ceil(alpha * num / k)) - 1]
             min_beta = beta if beta < min_beta else min_beta
 
+    if min_beta == 10000000000000000:
+        return 3  # No blocking coalitions could form
     return min_beta
 
 
@@ -111,14 +113,15 @@ def generate_groups(client_list, criteria_index):
     Returns a list of sublists that store clients in protected groups, one for each group.
     """
     groups_dict = {}
-    for client in client_list:
+    for index, client in enumerate(client_list):
         value = client.data[criteria_index]
         if not value in groups_dict:
             groups_dict[value] = []
-        groups_dict[value].append(client)
+        groups_dict[value].append((index, client))
 
-    groups_list = [list for value, list in groups_dict.items()]
-    return groups_list
+    groups_list = [[client for (index, client) in list] for value, list in groups_dict.items()]
+    groups_index_list = [[index for (index, client) in list] for value, list in groups_dict.items()]
+    return groups_list, groups_index_list
 
 
 def calc_distances(client_list):
